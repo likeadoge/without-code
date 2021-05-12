@@ -3,13 +3,13 @@ module.exports = function woco(option = {}) {
     console.log(option)
     return {
         name: 'my-plugin', // 必须的，将会显示在 warning 和 error 中
-        resolveId(id) {
-            if (id === virtualFileId) {
-                return virtualFileId
+        async resolveId(id) {
+            if (id.indexOf('?woco') >= 0) {
+                return id
             }
         },
-        load(id) {
-            if (id === virtualFileId) {
+        async load(id) {
+            if (id.indexOf('?woco')>= 0) {
                 return `export const msg = "from virtual file"`
             }
         }

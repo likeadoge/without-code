@@ -4,7 +4,5 @@ import woco from 'woco-vite-plugin'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue(),woco({
-    virtualFileId:'@my-virtual-file'
-  })]
+  plugins: [vue(),woco()]
 })
