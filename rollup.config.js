@@ -1,26 +1,58 @@
-class Pipe{
-    
-    #val = null
+import path from 'path'
+import resolve from 'rollup-plugin-node-resolve'
+import commonjs from 'rollup-plugin-commonjs'
+import json from 'rollup-plugin-json'
+import { terser } from "rollup-plugin-terser";
 
-    constructor(val = null){
-        this.#val = val
+
+
+class Config {
+
+    #target = '' // 需要打包的包名
+    #formats = ['cjs'] // 'cjs' 'esm' 'iifs' 'umd' 等
+    #env = 'production' // 'develop' 'production'
+    #sourcemap = false //
+
+
+    constructor(target) {
+        this.#target = target
     }
 
-    next(fn){
-        const newVal = fn(this.#val)
-        return new Pipe(this.#val)
+    format(...args) {
+        this.#formats = args
+        return this
+    }
+
+    env(env = 'production') {
+        this.#env = env
+        return this
+    }
+
+    sourcemap(bool) {
+        this.#sourcemap = bool
+    }
+
+    createRollupConfig() {
+        const pkgDir = path.resolve('./packages/', this.#target)
+        console.log(path.resolve(pkgDir, '/src/index.js'))
+        return {
+            input: path.resolve(pkgDir, './src/index.js'),
+            output: this.#formats.map(format => ({
+                file: path.resolve(pkgDir, `./dist/index.${format}.js`),
+                format: format,
+                name: this.#target,
+            })),
+            plugins: [
+                resolve({ preferBuiltins: true, browser: true }),
+                commonjs(),
+                json({ compact: true }),
+                terser()
+            ]
+        }
     }
 }
 
 
-class Config{
+const pkg = ['woco-vite-plugin']
 
-    target =  '' // 需要打包的包名
-    formats = ['ejs'] // 'cjs' 'esm' 'iifs' 'umd' 等
-    env = 'production' // 'develop' 'production'
-    sourcemap = false //
-}
-
-
-
-
+export default pkg.map(target => new Config(target).createRollupConfig())

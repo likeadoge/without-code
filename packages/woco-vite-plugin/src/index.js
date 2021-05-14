@@ -1,6 +1,4 @@
-module.exports = function woco(option = {}) {
-    const {virtualFileId} = option
-    console.log(option)
+export function woco(option = {}) {
     return {
         name: 'my-plugin', // 必须的，将会显示在 warning 和 error 中
         async resolveId(id) {
